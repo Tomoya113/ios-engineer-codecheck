@@ -21,13 +21,12 @@ class SearchRepositoriesController: UITableViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view.
         searchBar.text = "GitHubのリポジトリを検索できるよー"
         searchBar.delegate = self
     }
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-
+        // NOTE:画面遷移時に呼ばれる
         if segue.identifier == "Detail"{
             let destinationViewController = segue.destination as! RepositoryDetailViewController
             destinationViewController.searchRepositoriesController = self
@@ -54,7 +53,7 @@ extension SearchRepositoriesController {
     }
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        // 画面遷移時に呼ばれる
+        // NOTE:セルを選択した時に呼ばれる
         selectedRepositoryIndex = indexPath.row
         performSegue(withIdentifier: "Detail", sender: self)
 
@@ -65,7 +64,7 @@ extension SearchRepositoriesController {
 // MARK: UISearchBar Configuration
 extension SearchRepositoriesController: UISearchBarDelegate {
     func searchBarShouldBeginEditing(_ searchBar: UISearchBar) -> Bool {
-        // ↓こうすれば初期のテキストを消せる
+        // NOTE:SearchBarの文字を初期化する
         searchBar.text = ""
         return true
     }
@@ -90,7 +89,7 @@ extension SearchRepositoriesController: UISearchBarDelegate {
                     }
                 }
             }
-            // これ呼ばなきゃリストが更新されません
+            // NOTE:タスクを実行する(resumeを実行しないとタスクが実行されない)
             task?.resume()
         }
 
