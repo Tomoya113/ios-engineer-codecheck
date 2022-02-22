@@ -27,9 +27,11 @@ class SearchRepositoriesViewController: UITableViewController {
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         // NOTE:画面遷移時に呼ばれる
-        if segue.identifier == "Detail"{
-            let destinationViewController = segue.destination as! RepositoryDetailViewController
-            destinationViewController.searchRepositoriesController = self
+        if segue.identifier == "Detail" {
+            guard let destinationViewController = segue.destination as? RepositoryDetailViewController else {
+                fatalError("This line can not be reached")
+            }
+            destinationViewController.searchRepositoriesViewController = self
         }
     }
 
@@ -56,7 +58,6 @@ extension SearchRepositoriesViewController {
         // NOTE:セルを選択した時に呼ばれる
         selectedRepositoryIndex = indexPath.row
         performSegue(withIdentifier: "Detail", sender: self)
-
     }
 
 }
