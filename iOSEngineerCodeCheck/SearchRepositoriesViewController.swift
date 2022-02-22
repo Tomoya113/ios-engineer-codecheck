@@ -74,24 +74,27 @@ extension SearchRepositoriesViewController: UISearchBarDelegate {
     }
 
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        guard let searchWord = searchBar.text else { return }
+        if searchWord.isEmpty { return }
 
-        searchWord = searchBar.text!
-
-        if searchWord.count != 0 {
-            apiURL = "https://api.github.com/search/repositories?q=\(searchWord!)"
-            task = URLSession.shared.dataTask(with: URL(string: apiURL)!) { (data, res, err) in
-                if let obj = try! JSONSerialization.jsonObject(with: data!) as? [String: Any] {
-                    if let items = obj["items"] as? [[String: Any]] {
-                        self.repositories = items
-                        DispatchQueue.main.async {
-                            self.tableView.reloadData()
-                        }
-                    }
-                }
-            }
-            // NOTE:タスクを実行する(resumeを実行しないとタスクが実行されない)
-            task?.resume()
+        let apiURLString = "https://api.github.com/search/repositories?q=\(searchWord)"
+        guard let apiURL = URL(string: apiURLString) else {
+            print("invalid URL")
+            return
         }
 
+        task = URLSession.shared.dataTask(with: apiURL) { (data, res, err) in
+            guard let data = data else { return }
+            guard let json = try? JSONSerialization.jsonObject(with: data) else { return }
+            guard let obj = json as? [String: Any] else { return }
+            guard let items = obj["items"] as? [[String: Any]] else { return }
+
+            self.repositories = items
+            DispatchQueue.main.async {
+                self.tableView.reloadData()
+            }
+        }
+        // NOTE:タスクを実行する(resumeを実行しないとタスクが実行されない)
+        task?.resume()
     }
 }
