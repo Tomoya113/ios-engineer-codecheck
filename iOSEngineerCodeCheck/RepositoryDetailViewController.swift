@@ -21,7 +21,7 @@ class RepositoryDetailViewController: UIViewController {
     @IBOutlet weak var forksCountLabel: UILabel!
     @IBOutlet weak var openIssuesCountLabel: UILabel!
 
-    var searchRepositoriesController: SearchRepositoriesController!
+    var searchRepositoriesController: SearchRepositoriesViewController!
 
     override func viewDidLoad() {
         super.viewDidLoad()

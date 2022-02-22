@@ -1,5 +1,5 @@
 //
-//  SearchRepositoriesController.swift
+//  SearchRepositoriesViewController.swift
 //  iOSEngineerCodeCheck
 //
 //  Created by 史 翔新 on 2020/04/20.
@@ -8,7 +8,7 @@
 
 import UIKit
 
-class SearchRepositoriesController: UITableViewController {
+class SearchRepositoriesViewController: UITableViewController {
 
     @IBOutlet weak var searchBar: UISearchBar!
 
@@ -36,7 +36,7 @@ class SearchRepositoriesController: UITableViewController {
 }
 
 // MARK: TableView Configuration
-extension SearchRepositoriesController {
+extension SearchRepositoriesViewController {
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return repositories.count
     }
@@ -62,7 +62,7 @@ extension SearchRepositoriesController {
 }
 
 // MARK: UISearchBar Configuration
-extension SearchRepositoriesController: UISearchBarDelegate {
+extension SearchRepositoriesViewController: UISearchBarDelegate {
     func searchBarShouldBeginEditing(_ searchBar: UISearchBar) -> Bool {
         // NOTE:SearchBarの文字を初期化する
         searchBar.text = ""
