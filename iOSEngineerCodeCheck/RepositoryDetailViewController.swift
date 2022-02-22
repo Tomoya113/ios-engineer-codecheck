@@ -38,21 +38,23 @@ class RepositoryDetailViewController: UIViewController {
     }
 
     func getRepositoryAvatar() {
+        titleLabel.text = repository["full_name"] as? String ?? ""
 
-        let repository = searchRepositoriesController.repositories[searchRepositoriesController.selectedRepositoryIndex]
+        guard
+            let owner = repository["owner"] as? [String: Any],
+            let avatarURLString = owner["avatar_url"] as? String
+        else { return }
 
-        titleLabel.text = repository["full_name"] as? String
+        guard let avatarURL = URL(string: avatarURLString) else { return }
 
-        if let owner = repository["owner"] as? [String: Any] {
-            if let avatarURL = owner["avatar_url"] as? String {
-                URLSession.shared.dataTask(with: URL(string: avatarURL)!) { (data, res, err) in
-                    let image = UIImage(data: data!)!
-                    DispatchQueue.main.async {
-                        self.avatarImageView.image = image
-                    }
-                }.resume()
+        URLSession.shared.dataTask(with: avatarURL) { (data, res, err) in
+            guard let data = data else { return }
+            let image = UIImage(data: data)
+            guard let image = image else { return }
+            DispatchQueue.main.async {
+                self.avatarImageView.image = image
             }
-        }
+        }.resume()
 
     }
 
