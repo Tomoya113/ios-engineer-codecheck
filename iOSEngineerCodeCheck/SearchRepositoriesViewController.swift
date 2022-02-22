@@ -29,7 +29,7 @@ class SearchRepositoriesViewController: UITableViewController {
         // NOTE:画面遷移時に呼ばれる
         if segue.identifier == "Detail"{
             let destinationViewController = segue.destination as! RepositoryDetailViewController
-            destinationViewController.searchRepositoriesController = self
+            destinationViewController.searchRepositoriesViewController = self
         }
     }
 

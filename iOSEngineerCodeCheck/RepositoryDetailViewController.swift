@@ -21,12 +21,12 @@ class RepositoryDetailViewController: UIViewController {
     @IBOutlet weak var forksCountLabel: UILabel!
     @IBOutlet weak var openIssuesCountLabel: UILabel!
 
-    var searchRepositoriesController: SearchRepositoriesViewController!
+    var searchRepositoriesViewController: SearchRepositoriesViewController!
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let repository = searchRepositoriesController.repositories[searchRepositoriesController.selectedRepositoryIndex]
+        let repository = searchRepositoriesViewController.repositories[searchRepositoriesViewController.selectedRepositoryIndex]
 
         languageLabel.text = "Written in \(repository["language"] as? String ?? "")"
         starCountLabel.text = "\(repository["stargazers_count"] as? Int ?? 0) stars"
@@ -39,7 +39,7 @@ class RepositoryDetailViewController: UIViewController {
 
     func getRepositoryAvatar() {
 
-        let repository = searchRepositoriesController.repositories[searchRepositoriesController.selectedRepositoryIndex]
+        let repository = searchRepositoriesViewController.repositories[searchRepositoriesViewController.selectedRepositoryIndex]
 
         titleLabel.text = repository["full_name"] as? String
 
