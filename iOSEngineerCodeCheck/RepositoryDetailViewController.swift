@@ -10,18 +10,16 @@ import UIKit
 
 class RepositoryDetailViewController: UIViewController {
 
-    @IBOutlet weak var avatarImageView: UIImageView!
-    
-    @IBOutlet weak var titleLabel: UILabel!
-    
-    @IBOutlet weak var languageLabel: UILabel!
+    @IBOutlet weak private var avatarImageView: UIImageView!
+    @IBOutlet weak private var titleLabel: UILabel!
+    @IBOutlet weak private var languageLabel: UILabel!
+    @IBOutlet weak private var starCountLabel: UILabel!
+    @IBOutlet weak private var watchersLabel: UILabel!
+    @IBOutlet weak private var forksCountLabel: UILabel!
+    @IBOutlet weak private var openIssuesCountLabel: UILabel!
 
-    @IBOutlet weak var starCountLabel: UILabel!
-    @IBOutlet weak var watchersLabel: UILabel!
-    @IBOutlet weak var forksCountLabel: UILabel!
-    @IBOutlet weak var openIssuesCountLabel: UILabel!
-
-    var searchRepositoriesController: SearchRepositoriesViewController!
+    var searchRepositoriesViewController: SearchRepositoriesViewController?
+    private var repository: [String: Any] = [:]
 
     override func viewDidLoad() {
         super.viewDidLoad()
