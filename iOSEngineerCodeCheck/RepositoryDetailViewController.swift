@@ -33,7 +33,7 @@ class RepositoryDetailViewController: UIViewController {
 
         languageLabel.text = "Written in \(repository["language"] as? String ?? "")"
         starCountLabel.text = "\(repository["stargazers_count"] as? Int ?? 0) stars"
-        watchersLabel.text = "\(repository["wachers_count"] as? Int ?? 0) watchers"
+        watchersLabel.text = "\(repository["watchers_count"] as? Int ?? 0) watchers"
         forksCountLabel.text = "\(repository["forks_count"] as? Int ?? 0) forks"
         openIssuesCountLabel.text = "\(repository["open_issues_count"] as? Int ?? 0) open issues"
         getRepositoryAvatar()
@@ -50,7 +50,8 @@ class RepositoryDetailViewController: UIViewController {
 
         guard let avatarURL = URL(string: avatarURLString) else { return }
 
-        URLSession.shared.dataTask(with: avatarURL) { (data, res, err) in
+        URLSession.shared.dataTask(with: avatarURL) { [weak self] (data, res, err) in
+            guard let self = self else { return }
             guard let data = data else { return }
             let image = UIImage(data: data)
             guard let image = image else { return }
