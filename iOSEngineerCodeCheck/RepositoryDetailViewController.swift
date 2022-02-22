@@ -25,8 +25,13 @@ class RepositoryDetailViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        let repository = searchRepositoriesController.repositories[searchRepositoriesController.selectedRepositoryIndex]
+        guard
+            let searchRepositoriesViewController = searchRepositoriesViewController,
+            let selectedRepositoryIndex = searchRepositoriesViewController.selectedRepositoryIndex
+        else {
+            return
+        }
+        repository = searchRepositoriesViewController.repositories[selectedRepositoryIndex]
 
         languageLabel.text = "Written in \(repository["language"] as? String ?? "")"
         starCountLabel.text = "\(repository["stargazers_count"] as? Int ?? 0) stars"
