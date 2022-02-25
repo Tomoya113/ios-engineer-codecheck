@@ -33,6 +33,7 @@ disabled_rules:
     - syntactic_sugar
     - for_where
     - overridden_super_call
+    - file_header
 included:
     - ./iOSEngineerCodeCheck
     - ./iOSEngineerCodeCheckTests
@@ -43,7 +44,6 @@ opt_in_rules:
     - force_cast
     - empty_string
     - empty_count
-    - file_header
     - explicit_init
     - closure_spacing
     - redundant_nil_coalescing
