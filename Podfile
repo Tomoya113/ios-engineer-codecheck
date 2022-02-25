@@ -6,6 +6,11 @@ target 'iOSEngineerCodeCheck' do
   use_frameworks!
 
   # Pods for iOSEngineerCodeCheck
+	pod 'Moya'
+	pod 'Moya/RxSwift'
+	pod 'Nuke'
+	pod 'RxCocoa'
+	pod 'RxSwift'
 	pod 'SwiftLint'
 
   target 'iOSEngineerCodeCheckTests' do
