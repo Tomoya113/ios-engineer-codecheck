@@ -31,7 +31,10 @@ final class GitHubAPIClient: GitHubAPIClientType {
             .filterSuccessfulStatusCodes()
             .map(Response.self, using: decoder)
             .catch { error in
-                return Single.error(error)
+                if let error = error as? MoyaError {
+                    return .error(error)
+                }
+                return .error(UnexpectedError())
             }
     }
 }
