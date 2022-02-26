@@ -18,6 +18,8 @@ protocol SearchRepositoriesViewModelInputs {
 protocol SearchRepositoriesViewModelOutputs {
     var repositories: Driver<[GitHubRepositories.Item]> { get }
     var selectedItem: Driver<GitHubRepositories.Item> { get }
+    var hasSearchQueryEmptyError: Driver<Bool> { get }
+    var loading: Driver<Bool> { get }
 }
 
 protocol SearchRepositoriesViewModelType {
@@ -28,6 +30,8 @@ protocol SearchRepositoriesViewModelType {
 final class SearchRepositoriesViewModel: SearchRepositoriesViewModelInputs, SearchRepositoriesViewModelOutputs {
     var searchQuery: AnyObserver<String>
     var selectedItemIndex: AnyObserver<IndexPath>
+    var hasSearchQueryEmptyError: Driver<Bool>
+    var loading: Driver<Bool>
 
     var repositories: Driver<[GitHubRepositories.Item]>
     var selectedItem: Driver<GitHubRepositories.Item>
@@ -39,6 +43,8 @@ final class SearchRepositoriesViewModel: SearchRepositoriesViewModelInputs, Sear
         let _selectedItemIndex = PublishRelay<IndexPath>()
         let _repositories = BehaviorRelay<[GitHubRepositories.Item]>(value: [])
         let _selectedItem = PublishRelay<GitHubRepositories.Item>()
+        let _loading = PublishRelay<Bool>()
+        let _hasSearchQueryEmptyError = PublishRelay<Bool>()
 
         searchQuery = AnyObserver<String> { event in
             guard let searchQuery = event.element else { return }
@@ -52,11 +58,26 @@ final class SearchRepositoriesViewModel: SearchRepositoriesViewModelInputs, Sear
 
         repositories = _repositories.asDriver()
         selectedItem = _selectedItem.asDriver(onErrorDriveWith: Driver.empty())
+        loading = _loading.asDriver(onErrorDriveWith: Driver.empty())
+        hasSearchQueryEmptyError = _hasSearchQueryEmptyError.asDriver(onErrorDriveWith: Driver.empty())
 
-        let searchResult = _searchQuery.flatMap { searchQuery -> Single<[GitHubRepositories.Item]> in
-            return model.fetchRepositories(searchQuery: searchQuery)
+        let searchQueryValidationResult = _searchQuery.flatMap { searchQuery in
+            return Observable.just(SearchQueryValidator.validate(searchQuery))
         }
         .share()
+
+        let searchRepositoriesResult = searchQueryValidationResult
+            .filterValid()
+            .flatMap { searchQuery -> Single<[GitHubRepositories.Item]> in
+                _loading.accept(true)
+                return model.fetchRepositories(searchQuery: searchQuery)
+            }
+            .share()
+
+        searchQueryValidationResult
+            .filterSearchQueryEmpty()
+            .bind(to: _hasSearchQueryEmptyError)
+            .disposed(by: disposeBag)
 
         _selectedItemIndex.map { selectedItemIndex in
             return _repositories.value[selectedItemIndex.row]
@@ -64,12 +85,16 @@ final class SearchRepositoriesViewModel: SearchRepositoriesViewModelInputs, Sear
         .bind(to: _selectedItem)
         .disposed(by: disposeBag)
 
-        searchResult
+        searchRepositoriesResult
             .bind(to: _repositories)
             .disposed(by: disposeBag)
 
-    }
+        searchRepositoriesResult
+            .map { _ -> Bool in false }
+            .bind(to: _loading)
+            .disposed(by: disposeBag)
 
+    }
 }
 
 extension SearchRepositoriesViewModel: SearchRepositoriesViewModelType {
