@@ -15,7 +15,7 @@ protocol GitHubRepositoriesRepositoryType {
 }
 
 final class GitHubRepositoriesRepository: GitHubRepositoriesRepositoryType {
-    let apiClient: GitHubAPIClientType
+    private let apiClient: GitHubAPIClientType
 
     init(apiClient: GitHubAPIClientType) {
         self.apiClient = apiClient
