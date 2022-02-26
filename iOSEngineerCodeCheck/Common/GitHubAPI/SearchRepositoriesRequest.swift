@@ -40,4 +40,41 @@ struct SearchRepositoriesRequest: TargetType {
         return nil
     }
 
+    var sampleData: Data {
+        return """
+        {
+            "items": [
+            {
+                "forks_count": 9438,
+                "full_name": "apple/swift",
+                "language": "C++",
+                "open_issues_count": 511,
+                "owner": {
+                    "avatar_url": "https://avatars.githubusercontent.com/u/10639145?v=4"
+                },
+                "stargazers_count": 58786,
+                "watchers_count": 58786
+            }
+
+            ]
+        }
+        """.data(using: .utf8)!
+    }
+
+    var errorResponseData: Data {
+        return """
+        {
+           "message":"Validation Failed",
+           "errors":[
+              {
+                 "resource":"Search",
+                 "field":"q",
+                 "code":"missing"
+              }
+           ],
+           "documentation_url":"https://docs.github.com/v3/search"
+        }
+        """.data(using: .utf8)!
+    }
+
 }
