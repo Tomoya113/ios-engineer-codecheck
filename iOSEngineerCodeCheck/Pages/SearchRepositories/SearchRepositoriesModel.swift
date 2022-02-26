@@ -14,7 +14,7 @@ protocol SearchRepositoriesModelType {
 }
 
 final class SearchRepositoriesModel: SearchRepositoriesModelType {
-    let gitHubRepositoriesRepository: GitHubRepositoriesRepositoryType
+    private let gitHubRepositoriesRepository: GitHubRepositoriesRepositoryType
 
     init(gitHubRepositoriesRepository: GitHubRepositoriesRepositoryType) {
         self.gitHubRepositoriesRepository = gitHubRepositoriesRepository
