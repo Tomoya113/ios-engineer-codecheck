@@ -87,6 +87,13 @@ final class SearchRepositoriesViewController: UITableViewController {
                 self.presentSearchQueryEmptyAlert()
             })
             .disposed(by: disposeBag)
+
+        viewModel.outputs.error
+            .drive(onNext: { [weak self] _ in
+                guard let self = self else { return }
+                self.presentErrorAlert()
+            })
+            .disposed(by: disposeBag)
     }
 
     private func setupView() {
@@ -98,6 +105,18 @@ final class SearchRepositoriesViewController: UITableViewController {
         let alert = UIAlertController(
             title: "エラー",
             message: "1文字以上文字を入力してください",
+            preferredStyle: .alert
+        )
+        let alertAction = UIAlertAction(title: "閉じる", style: .default, handler: nil)
+
+        alert.addAction(alertAction)
+        self.present(alert, animated: true, completion: nil)
+    }
+
+    private func presentErrorAlert() {
+        let alert = UIAlertController(
+            title: "エラー",
+            message: "何らかのエラーが発生しました。",
             preferredStyle: .alert
         )
         let alertAction = UIAlertAction(title: "閉じる", style: .default, handler: nil)
