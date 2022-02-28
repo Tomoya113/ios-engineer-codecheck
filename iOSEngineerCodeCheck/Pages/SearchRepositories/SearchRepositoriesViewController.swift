@@ -7,6 +7,7 @@
 //
 
 import Moya
+import PKHUD
 import RxCocoa
 import RxSwift
 import UIKit
@@ -62,14 +63,28 @@ final class SearchRepositoriesViewController: UITableViewController {
             }
             .disposed(by: disposeBag)
 
+        viewModel.outputs.loading
+            .drive(onNext: { isProgress in
+                isProgress ? HUD.show(.progress) : HUD.hide()
+            })
+            .disposed(by: disposeBag)
+
         tableView.rx.itemSelected
             .bind(to: viewModel.inputs.selectedItemIndex)
             .disposed(by: disposeBag)
 
         viewModel.outputs.selectedItem
-            .drive(onNext: { [router] selectedItem in
-                let destinationViewController = router.createRepositoryDetailPage(selectedRepository: selectedItem)
+            .drive(onNext: { [weak self] selectedItem in
+                guard let self = self else { return }
+                let destinationViewController = self.router.createRepositoryDetailPage(selectedRepository: selectedItem)
                 self.navigationController?.pushViewController(destinationViewController, animated: true)
+            })
+            .disposed(by: disposeBag)
+
+        viewModel.outputs.hasSearchQueryEmptyError
+            .drive(onNext: { [weak self] _ in
+                guard let self = self else { return }
+                self.presentSearchQueryEmptyAlert()
             })
             .disposed(by: disposeBag)
     }
@@ -77,6 +92,18 @@ final class SearchRepositoriesViewController: UITableViewController {
     private func setupView() {
         title = "リポジトリ検索"
         searchBar.placeholder = "検索したいリポジトリ名を入力"
+    }
+
+    private func presentSearchQueryEmptyAlert() {
+        let alert = UIAlertController(
+            title: "エラー",
+            message: "1文字以上文字を入力してください",
+            preferredStyle: .alert
+        )
+        let alertAction = UIAlertAction(title: "閉じる", style: .default, handler: nil)
+
+        alert.addAction(alertAction)
+        self.present(alert, animated: true, completion: nil)
     }
 
     private func configureTableViewDelegate() {
