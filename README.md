@@ -1,45 +1,61 @@
-# 株式会社ゆめみ iOS エンジニアコードチェック課題
+# iOS エンジニアコードチェック課題
 
-## 概要
+## アーキテクチャ
 
-本プロジェクトは株式会社ゆめみ（以下弊社）が、弊社に iOS エンジニアを希望する方に出す課題のベースプロジェクトです。本課題が与えられた方は、下記の概要を詳しく読んだ上で課題を取り組んでください。
+MVVMに加え、Repository, Routerパターンを使って実装しました。
+<img src="https://user-images.githubusercontent.com/22112440/155922895-b167fbeb-75c0-4cfc-9cdc-5db1186f45ae.png" width="600px">
 
-## アプリ仕様
+## 環境構築
+CocoaPodsをインストールしていない場合はインストールしてください
+```
+$ pod install
+$ open iOSEngineerCodeCheck.xcworkspace
+```
 
-本アプリは GitHub のリポジトリーを検索するアプリです。
+## ライブラリ
+追加したライブラリは以下の通りです。
+- Moya
+- Moya/RxSwift
+- Nuke
+- PKHUD
+- RxCocoa
+- RxSwift
+- RxTest
+- SwiftLint
 
-![動作イメージ](README_Images/app.gif)
+## 取り組んだ課題
+以下の課題に取り組みました。
+- [ソースコードの可読性の向上](https://github.com/Tomoya113/ios-engineer-codecheck/issues/1)
+- [ソースコードの安全性の向上](https://github.com/Tomoya113/ios-engineer-codecheck/issues/2)
+- [バグを修正](https://github.com/Tomoya113/ios-engineer-codecheck/issues/3)
+- [アーキテクチャを適用](https://github.com/Tomoya113/ios-engineer-codecheck/issues/6)
+- [新機能を追加](https://github.com/Tomoya113/ios-engineer-codecheck/issues/8)
+- [テストを追加](https://github.com/Tomoya113/ios-engineer-codecheck/issues/9)
 
-### 環境
+## 追加した機能
+元のアプリに以下の新しい機能を追加しました。
 
-- IDE：基本最新の安定版（本概要更新時点では Xcode 13.0）
-- Swift：基本最新の安定版（本概要更新時点では Swift 5.5）
-- 開発ターゲット：基本最新の安定版（本概要更新時点では iOS 15.0）
-- サードパーティーライブラリーの利用：オープンソースのものに限り制限しない
+### [リポジトリ検索画面にバリデーションとローディング機能を追加](https://github.com/Tomoya113/ios-engineer-codecheck/pull/24)
+- 文字が入力されずに検索が行われた時にアラートを出す機能
+- 検索時のローディング機能
 
-### 動作
+### [リポジトリ検索機能にエラーハンドリング機能を追加](https://github.com/Tomoya113/ios-engineer-codecheck/pull/25)
+- エラーが発生した時にアラートを出す機能
 
-1. 何かしらのキーワードを入力
-2. GitHub API（`search/repositories`）でリポジトリーを検索し、結果一覧を概要（リポジトリ名）で表示
-3. 特定の結果を選択したら、該当リポジトリの詳細（リポジトリ名、オーナーアイコン、プロジェクト言語、Star 数、Watcher 数、Fork 数、Issue 数）を表示
+## 反省点
+開発中に感じた反省点、提出期限までに着手できなかった改善点についてです。
 
-## 課題取り組み方法
+### テスト用のモックの管理
 
-Issues を確認した上、本プロジェクトを [**Duplicate** してください](https://help.github.com/en/github/creating-cloning-and-archiving-repositories/duplicating-a-repository)（Fork しないようにしてください。必要ならプライベートリポジトリーにしても大丈夫です）。今後のコミットは全てご自身のリポジトリーで行ってください。
+テスト用のモックを生成するコードが長く、複雑になってしまっている。
 
-コードチェックの課題 Issue は全て [`課題`](https://github.com/yumemi/ios-engineer-codecheck/milestone/1) Milestone がついており、難易度に応じて Label が [`初級`](https://github.com/yumemi/ios-engineer-codecheck/issues?q=is%3Aopen+is%3Aissue+label%3A初級+milestone%3A課題)、[`中級`](https://github.com/yumemi/ios-engineer-codecheck/issues?q=is%3Aopen+is%3Aissue+label%3A中級+milestone%3A課題+) と [`ボーナス`](https://github.com/yumemi/ios-engineer-codecheck/issues?q=is%3Aopen+is%3Aissue+label%3Aボーナス+milestone%3A課題+) に分けられています。課題の必須／選択は下記の表とします：
-
-|   | 初級 | 中級 | ボーナス
-|--:|:--:|:--:|:--:|
-| 新卒／未経験者 | 必須 | 選択 | 選択 |
-| 中途／経験者 | 必須 | 必須 | 選択 |
+#### 改善案
+mockoloなどのモックを自動で生成するライブラリを導入する。
 
 
-課題 Issueをご自身のリポジトリーにコピーするGitHub Actionsをご用意しております。  
-[こちらのWorkflow](./.github/workflows/copy-issues.yml)を[手動でトリガーする](https://docs.github.com/ja/actions/managing-workflow-runs/manually-running-a-workflow)ことでコピーできますのでご活用下さい。
+### project.pbxprojの管理
+MVVMアーキテクチャを構築する際に、最初に必要なファイルをすべて作り、ブランチを切ってPRを出すというフローで開発を行ったので、PRの所々でproject.pbxprojの整合性が取れない部分ができてきてしまいました。
 
-課題が完成したら、リポジトリーのアドレスを教えてください。
+#### 改善案
+XcodeGenを使い、project.pbxprojの生成を自動化する。
 
-## 参考記事
-
-提出された課題の評価ポイントに関しては、[こちらの記事](https://qiita.com/lovee/items/d76c68341ec3e7beb611)に詳しく書かれてありますので、ぜひご覧ください。
