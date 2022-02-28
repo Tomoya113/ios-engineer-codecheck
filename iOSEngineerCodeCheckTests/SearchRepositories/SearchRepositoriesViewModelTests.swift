@@ -7,6 +7,7 @@
 //
 
 @testable import iOSEngineerCodeCheck
+@testable import Moya
 @testable import RxSwift
 @testable import RxTest
 import XCTest
@@ -118,6 +119,30 @@ class SearchRepositoriesViewModelTests: XCTestCase {
         XCTAssertEqual(selectedItemResult.count, 1)
 
     }
+
+    func testAPIErrorHandlingSuccess() throws {
+        let searchQueryEvent = dependency.testScheduler.createHotObservable([
+            Recorded.next(0, "swift")
+        ]).asObservable()
+
+        let viewModel = apiRequestFailureTestTarget()
+
+        searchQueryEvent
+            .bind(to: viewModel.inputs.searchQuery)
+            .disposed(by: dependency.disposeBag)
+        let errorObserver = dependency.testScheduler.createObserver(Error.self)
+
+        viewModel.outputs.error
+            .asObservable()
+            .bind(to: errorObserver)
+            .disposed(by: dependency.disposeBag)
+
+        dependency.testScheduler.start()
+        let errorResult = errorObserver.events.map { $0.value.element }
+
+        XCTAssertEqual(errorResult.count, 1)
+
+    }
 }
 
 
@@ -134,5 +159,21 @@ extension SearchRepositoriesViewModelTests {
             searchRepositoriesModelMock = SearchRepositoriesModelMock()
             testTarget = SearchRepositoriesViewModel(model: searchRepositoriesModelMock)
         }
+    }
+}
+
+extension SearchRepositoriesViewModelTests {
+    func apiRequestFailureTestTarget() -> SearchRepositoriesViewModel {
+        let endpointClosure = { (target: MultiTarget) -> Endpoint in
+            return APIMockHelper.generateEndpoint(
+                target: target,
+                sampleResponse: .networkError(NSError())
+            )
+        }
+        let stubbingProvider = MoyaProvider<MultiTarget>(endpointClosure: endpointClosure, stubClosure: MoyaProvider.immediatelyStub)
+        let apiClient = GitHubAPIClient(provider: stubbingProvider)
+        let repository = GitHubRepositoriesRepository(apiClient: apiClient)
+        let model = SearchRepositoriesModel(gitHubRepositoriesRepository: repository)
+        return SearchRepositoriesViewModel(model: model)
     }
 }
